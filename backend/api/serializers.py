@@ -4,7 +4,7 @@ from .models import AnalysisResult
 class AnalysisResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnalysisResult
-        fields = ['id', 'analysis_type', 'created_at']
+        fields = '__all__'
 
 class VariantDetectionSerializer(serializers.Serializer):
     reference_sequence = serializers.CharField()
