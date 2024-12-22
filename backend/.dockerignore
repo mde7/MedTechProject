@@ -1,0 +1,17 @@
+# Ignore Python cache
+api/__pycache__
+backend/__pycache__
+*.pyc
+*.pyo
+
+# Ignore Git
+.git
+.gitignore
+
+# Ignore secrets
+.env
+
+# Ignore Django-specific files
+db.sqlite3
+
+.DS_Store
