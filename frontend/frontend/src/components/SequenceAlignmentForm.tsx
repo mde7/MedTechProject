@@ -14,7 +14,7 @@ export default function SequenceAlignmentForm() {
                 reference_sequence: sequence1,
                 sample_sequence: sequence2,
             };
-            const endpoint = "http://localhost:8000/api/sequence-alignment/";
+            const endpoint = "https://medtech-backend-latest.onrender.com/api/sequence-alignment/";
 
             await postData({ url: endpoint, body, setResult });
         } catch (error) {

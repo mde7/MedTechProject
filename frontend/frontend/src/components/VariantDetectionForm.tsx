@@ -27,7 +27,7 @@ export default function VarianceDetectionForm() {
                 reference_sequence: sequence1,
                 sample_sequence: sequence2,
             };
-            const endpoint = "http://localhost:8000/api/variant-detection/";
+            const endpoint = "https://medtech-backend-latest.onrender.com/api/variant-detection/";
 
             await postData({ url: endpoint, body, setResult });
         } catch (error) {

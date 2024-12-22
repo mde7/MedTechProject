@@ -12,7 +12,7 @@ export default function AnalysisHistory() {
     useEffect(() => {
         async function fetchHistory() {
             try {
-                const response = await fetch("http://localhost:8000/api/analysis-history/");
+                const response = await fetch("https://medtech-backend-latest.onrender.com/api/analysis-history/");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
