@@ -2,7 +2,8 @@ import { useState } from "react";
 import SequenceAlignmentForm from "../components/SequenceAlignmentForm";
 import VariantDetectionForm from "../components/VariantDetectionForm";
 import ORFDetectionForm from "../components/ORFDetectionForm";
-import AnalysisHistory from "../components/AnalysisHistory";
+import RadarChart from "../components/RadarChart";
+import AreaChart from "../components/AreaChart";
 
 export default function AnalysisPage() {
     const [analysisType, setAnalysisType] = useState<string>("sequence_alignment");
@@ -24,7 +25,9 @@ export default function AnalysisPage() {
             {analysisType === "orf_detection" && <ORFDetectionForm/>}
 
             <hr/>
-            <AnalysisHistory/>
+            <RadarChart/>
+            <hr/>
+            <AreaChart/>
         </div>
     );
 }
