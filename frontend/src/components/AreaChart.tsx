@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-type AreaChartItem = {
-    date: string;
-    analysis: AnalysisItem[];
+type AreaChartData = {
+    date: string,
+    analysis: AnalysisItem[]
 };
 
 type AnalysisItem = {
@@ -11,20 +11,21 @@ type AnalysisItem = {
 }
 
 export default function AreaChart() {
-    const [data, setData] = useState<AreaChartItem[]>([]);
+    const [data, setData] = useState<AreaChartData[]>([]);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch("https://medtech-backend-latest.onrender.com/api/radarchart/");
+                const response = await fetch("https://medtech-backend-latest.onrender.com/api/areachart/");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                const result: AreaChartItem[] = await response.json();
+                const result: AreaChartData[] = await response.json();
                 setData(result);
+                console.log(result);
             } catch (err) {
-                console.error("Failed to fetch radar data:", err);
+                console.error("Failed to fetch area data:", err);
             }
         }
         fetchData();
@@ -39,7 +40,7 @@ export default function AreaChart() {
                 <div>
                     {data.map((entry, index) => (
                         <div key={index}>
-                            <p><strong>Date:</strong> {new Date(entry.date).toLocaleString()}</p>
+                            <p><strong>Date:</strong> {new Date(entry.date).toLocaleDateString()}</p>
                             {entry.analysis.map((item, index) => (
                                 <div key={index}>
                                     <p>Analysis:{item.analysis_type}</p>
