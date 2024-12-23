@@ -15,7 +15,8 @@ class RadarChartView(APIView):
     def get(self, request):
         data = AnalysisResult.objects.values('analysis_type').annotate(count=Count('analysis_type'))
 
-        radar_data = {item['analysis_type']: item['count'] for item in data}
+        radar_data = [{"analysis_type": item['analysis_type'],
+                      "analysis_count": item['count']} for item in data]
 
         return Response(radar_data, status=status.HTTP_200_OK)
 
