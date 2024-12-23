@@ -17,12 +17,13 @@ Including another URLconf
 from django.http import JsonResponse
 from django.contrib import admin
 from django.urls import path
-from api.views import AnalysisResultView, VariantDetectionView, SequenceAlignmentView, ORFDetectionView
+from api.views import RadarChartView, AreaChartView, VariantDetectionView, SequenceAlignmentView, ORFDetectionView
 
 
 urlpatterns = [
     path('', lambda request: JsonResponse({"status": "ok"}), name='health-check'),
-    path('api/analysis-history/', AnalysisResultView.as_view(), name = 'analysis-history'),
+    path('api/radarchart/', RadarChartView.as_view(), name = 'radarchart'),
+    path('api/areachart/', AreaChartView.as_view(), name = 'areachart'),
     path('api/variant-detection/', VariantDetectionView.as_view(), name='variant-detection'),
     path('api/sequence-alignment/', SequenceAlignmentView.as_view(), name='sequence-alignment'),
     path('api/orf-detection/', ORFDetectionView.as_view(), name='orf-detection'),

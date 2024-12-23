@@ -1,3 +1,6 @@
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,9 +11,31 @@ from .analysis import variant_detection, sequence_alignment, orf_detection
 from .models import AnalysisResult
 # Create your views here.
 
-class AnalysisResultView(generics.ListAPIView):
-    queryset = AnalysisResult.objects.all()
-    serializer_class = AnalysisResultSerializer
+class RadarChartView(APIView):
+    def get(self, request):
+        data = AnalysisResult.objects.values('analysis_type').annotate(count=Count('analysis_type'))
+
+        radar_data = {item['analysis_type']: item['count'] for item in data}
+
+        return Response(radar_data, status=status.HTTP_200_OK)
+
+class AreaChartView(APIView):
+    def get(self, request):
+        data = AnalysisResult.objects.annotate(date=TruncDate('created_at')).values('date', 'analysis_type').annotate(count=Count('analysis_type'))
+
+        area_data = {}
+
+        for entry in data:
+            date = entry['date'].strftime('%Y-%m-%d')
+            type = entry['analysis_type']
+            count = entry['count']
+
+            if not date in area_data:
+                area_data[date] = {}
+            
+            area_data[date][type] = count
+        
+        return Response(area_data, status=status.HTTP_200_OK)
 
 class VariantDetectionView(APIView):
     def post(self, request):
@@ -23,10 +48,7 @@ class VariantDetectionView(APIView):
             result = variant_detection(reference_sequence, sample_sequence)
 
             data = {
-                'analysis_type': 'variant_detection',
-                'input_sequence_1': reference_sequence,
-                'input_sequence_2': sample_sequence,
-                'result': result
+                'analysis_type': 'variant_detection'
             }
 
             db_serializer = AnalysisResultSerializer(data=data)
@@ -51,10 +73,7 @@ class SequenceAlignmentView(APIView):
             result = sequence_alignment(reference_sequence, sample_sequence)
 
             data = {
-                'analysis_type': 'sequence_alignment',
-                'input_sequence_1': reference_sequence,
-                'input_sequence_2': sample_sequence,
-                'result': result
+                'analysis_type': 'sequence_alignment'
             }
 
             db_serializer = AnalysisResultSerializer(data=data)
@@ -77,9 +96,7 @@ class ORFDetectionView(APIView):
             result = orf_detection(input_sequence)
 
             data = {
-                'analysis_type': 'orf_detection',
-                'input_sequence_1': input_sequence,
-                'result': result
+                'analysis_type': 'orf_detection'
             }
 
             db_serializer = AnalysisResultSerializer(data=data)
