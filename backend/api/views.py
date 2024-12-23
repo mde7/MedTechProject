@@ -25,17 +25,16 @@ class AreaChartView(APIView):
         data = AnalysisResult.objects.annotate(date=TruncDate('created_at')).values('date', 'analysis_type').annotate(count=Count('analysis_type'))
 
         area_data = {}
-
         for entry in data:
             date = entry['date'].strftime('%Y-%m-%d')
             type = entry['analysis_type']
             count = entry['count']
 
             if not date in area_data:
-                area_data[date] = {}
+                area_data[date] = []
             
-            area_data[date][type] = count
-        
+            area_data[date].append({"analysis_type": type, "analysis_count": count})
+
         return Response(area_data, status=status.HTTP_200_OK)
 
 class VariantDetectionView(APIView):
