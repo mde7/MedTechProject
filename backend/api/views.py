@@ -24,16 +24,19 @@ class AreaChartView(APIView):
     def get(self, request):
         data = AnalysisResult.objects.annotate(date=TruncDate('created_at')).values('date', 'analysis_type').annotate(count=Count('analysis_type'))
 
-        area_data = {}
+        date_data = {}
+
         for entry in data:
             date = entry['date'].strftime('%Y-%m-%d')
             type = entry['analysis_type']
             count = entry['count']
 
-            if not date in area_data:
-                area_data[date] = []
+            if not date in date_data:
+                date_data[date] = []
             
-            area_data[date].append({"analysis_type": type, "analysis_count": count})
+            date_data[date].append({"analysis_type": type, "analysis_count": count})
+
+        area_data = [{"date": date, "analysis": analysis} for date, analysis in date_data.items()]
 
         return Response(area_data, status=status.HTTP_200_OK)
 
