@@ -22,7 +22,7 @@ class RadarChartView(APIView):
 
 class AreaChartView(APIView):
     def get(self, request):
-        data = AnalysisResult.objects.annotate(date=TruncDate('created_at')).values('date', 'analysis_type').annotate(count=Count('analysis_type'))
+        data = AnalysisResult.objects.annotate(date=TruncDate('created_at')).values('date', 'analysis_type').annotate(count=Count('analysis_type')).order_by('date')
 
         date_data = {}
 
