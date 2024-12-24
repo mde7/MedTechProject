@@ -1,6 +1,39 @@
 import { useState } from "react";
 import { postData } from "../services/apiService";
 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+  
+ 
+const formSchema = z.object({
+    reference_sequence: z.string().min(1, {
+      message: "Input Sequence 1 must be at least 1 character.",
+    }),
+    sample_sequence: z.string().min(1, {
+        message: "Input Sequence 2 must be at least 1 character.",
+    }),
+})
+
 type ORFVariants = {
     type: string;
     position: number;
@@ -15,19 +48,23 @@ type ORFResult = {
 };
 
 export default function VarianceDetectionForm() {
-    const [sequence1, setSequence1] = useState("");
-    const [sequence2, setSequence2] = useState("");
     const [result, setResult] = useState<ORFResult | null>(null);
 
-    async function handleSubmit(event: React.FormEvent) {
-        event.preventDefault();
-
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          reference_sequence: "",
+          sample_sequence: "",
+        },
+      })
+    
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             const body = {
-                reference_sequence: sequence1,
-                sample_sequence: sequence2,
+                reference_sequence: values.reference_sequence,
+                sample_sequence: values.sample_sequence,
             };
-            const endpoint = "https://medtech-backend-latest.onrender.com/api/variant-detection/";
+            const endpoint = "http://127.0.0.1:8000/api/variant-detection/";
 
             await postData({ url: endpoint, body, setResult });
         } catch (error) {
@@ -36,39 +73,59 @@ export default function VarianceDetectionForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Variance Detection</h2>
-            <textarea
-                value={sequence1}
-                onChange={(e) => setSequence1(e.target.value)}
-                placeholder="Sequence 1"
-                required
-            />
-            <textarea
-                value={sequence2}
-                onChange={(e) => setSequence2(e.target.value)}
-                placeholder="Sequence 2"
-                required
-            />
-            <button type="submit">Submit</button>
-            {result && (
-                <div>
-                    <h3>Result:</h3>
-                    <p>Aligned Reference: {result.aligned_reference}</p>
-                    <p>Aligned Sample: {result.aligned_sample}</p>
-                    <p>Variants</p>
-                    {result.variants.map((variant, index) => {
-                        return(
-                            <div key={index}>
-                                <p>Type: {variant.type}</p>
-                                <p>Position: {variant.position}</p>
-                                <p>Reference Base: {variant.reference_base}</p>
-                                <p>Sample Base: {variant.sample_base}</p>
-                            </div>
-                        )
-                    })}
-                </div>
-            )}
-        </form>
+        <>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                control={form.control}
+                name="reference_sequence"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Reference Sequence</FormLabel>
+                    <FormControl>
+                        <Input placeholder="Sequence 1" {...field} />
+                    </FormControl>
+                    <FormMessage/>
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="sample_sequence"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Sample Sequence</FormLabel>
+                    <FormControl>
+                        <Input placeholder="Sequence 2" {...field}/>
+                    </FormControl>
+                    <FormMessage/>
+                    </FormItem>
+                )}
+                />
+                <Button type="submit">Submit</Button>
+            </form>
+        </Form>
+        {result && (
+        <Card>
+            <CardHeader>
+                <CardTitle>Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>Aligned Reference: {result.aligned_reference}</p>
+                <p>Aligned Sample: {result.aligned_sample}</p>
+                {result.variants.map((variant, index) => {
+                    return(
+                        <div key={index}>
+                            <p>Type: {variant.type}</p>
+                            <p>Position: {variant.position}</p>
+                            <p>Reference Base: {variant.reference_base}</p>
+                            <p>Sample Base: {variant.sample_base}</p>
+                        </div>
+                    )
+                })}
+            </CardContent>
+        </Card>
+        )}
+        </>
     );
 }

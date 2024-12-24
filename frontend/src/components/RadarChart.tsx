@@ -1,17 +1,39 @@
 import { useEffect, useState } from "react";
 
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
+
+const chartConfig = {
+    desktop: {
+      label: "Total",
+      color: "hsl(var(--chart-1))",
+    },
+} satisfies ChartConfig
+
 type RadarChartItem = {
     analysis_type: string;
     analysis_count: number;
 };
 
-export default function RadarChart() {
+export default function RadarChartComponent() {
     const [data, setData] = useState<RadarChartItem[]>([]);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch("https://medtech-backend-latest.onrender.com/api/radarchart/");
+                const response = await fetch("http://127.0.0.1:8000/api/radarchart/");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -26,20 +48,29 @@ export default function RadarChart() {
     }, []);
 
     return (
-        <div>
-            <h2>Radar Chart</h2>
-            {history.length === 0 ? (
-                <p>No data available.</p>
-            ) : (
-                <div>
-                    {data.map((item, index) => (
-                        <div key={index}>
-                            <p><strong>Type:</strong> {item.analysis_type}</p>
-                            <p><strong>Count:</strong> {item.analysis_count}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+        <Card>
+            <CardHeader>
+            <CardTitle>Radar Chart</CardTitle>
+            <CardDescription>
+                Showing total analyses performed
+            </CardDescription>
+            </CardHeader>
+            <CardContent>
+            <ChartContainer
+                config={chartConfig}
+            >
+                <RadarChart data={data}>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                <PolarAngleAxis dataKey="analysis_type" />
+                <PolarGrid />
+                <Radar
+                    dataKey="analysis_count"
+                    fill="var(--color-desktop)"
+                    fillOpacity={0.6}
+                />
+                </RadarChart>
+            </ChartContainer>
+            </CardContent>
+        </Card>
     );    
 }
