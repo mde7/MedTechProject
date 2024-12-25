@@ -18,27 +18,31 @@ export default function AnalysisPage() {
 
     return (
         <div>
-            <h1>Genomic Sequence Analyzer</h1>
+            <h1 className="text-3xl">Genomic Sequence Analyzer</h1>
 
-            <Select onValueChange={(value) => setAnalysisType(value)}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder='Analysis'/>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="sequence_alignment">Sequence Alignment</SelectItem>
-                    <SelectItem value="variant_detection">Variance Detection</SelectItem>
-                    <SelectItem value="orf_detection">ORF Detection</SelectItem>
-                </SelectContent>
-            </Select>
+            <div className="flex justify-center my-7">
+                <Select onValueChange={(value) => setAnalysisType(value)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder='Analysis'/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="sequence_alignment">Sequence Alignment</SelectItem>
+                        <SelectItem value="variant_detection">Variant Detection</SelectItem>
+                        <SelectItem value="orf_detection">ORF Detection</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
-            {analysisType === "sequence_alignment" && <SequenceAlignmentForm/>}
-            {analysisType === "variant_detection" && <VariantDetectionForm/>}
-            {analysisType === "orf_detection" && <ORFDetectionForm/>}
+            <div className="my-7 mx-7">
+                {analysisType === "sequence_alignment" && <SequenceAlignmentForm/>}
+                {analysisType === "variant_detection" && <VariantDetectionForm/>}
+                {analysisType === "orf_detection" && <ORFDetectionForm/>}
+            </div>
 
-            <hr/>
-            <RadarChart/>
-            <hr/>
-            <AreaChart/>
+            <div className="grid grid-cols-2 gap-7">
+                <RadarChart/>
+                <AreaChart/>
+            </div>
         </div>
     );
 }

@@ -47,12 +47,12 @@ export default function AreaChartComponent() {
                         analysis.map((item) => item.analysis_type)
                     ))
                 );
-
+                
                 setAnalyses(analyses_list);
                 
                 const config = {
                     total: { label: "Total" },
-                    ...analyses.reduce((config, key, index) => {
+                    ...analyses_list.reduce((config, key, index) => {
                         config[key] = {
                             label: key,
                             color: `hsl(var(--chart-${index + 1}))`,
@@ -62,7 +62,7 @@ export default function AreaChartComponent() {
                 };
 
                 setChartConfig(config);
-
+                
                 const processed = result.map(({ date, analysis }) => {
                     const analysisMap: Record<string, number> = {};
                     analysis.forEach(({ analysis_type, analysis_count }) => {
@@ -73,7 +73,6 @@ export default function AreaChartComponent() {
                 });
 
                 setData(processed);
-
             } catch (err) {
                 console.error("Failed to fetch area data:", err);
             }
@@ -82,77 +81,75 @@ export default function AreaChartComponent() {
     }, []);
 
     return (
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Area Chart</CardTitle>
-                    <CardDescription>
-                        Showing total analyses
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig}>
-                    <AreaChart data={data}>
-                    <defs>
-                        {analyses.map(analysis => (
-                            <linearGradient key={analysis} id={`fill${analysis}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop
-                                    offset="5%"
-                                    stopColor={`var(--color-${analysis})`}
-                                    stopOpacity={0.8}
-                                />
-                                <stop
-                                    offset="95%"
-                                    stopColor={`var(--color-${analysis})`}
-                                    stopOpacity={0.1}
-                                />
-                            </linearGradient>
-                        ))}
-                    </defs>
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    minTickGap={32}
-                    tickFormatter={(value) => {
-                        const date = new Date(value)
-                        return date.toLocaleDateString("en-US", {
+        <Card>
+            <CardHeader>
+                <CardTitle>Area Chart</CardTitle>
+                <CardDescription>
+                    Showing total analyses
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig}>
+                <AreaChart data={data}>
+                <defs>
+                    {analyses.map(analysis => (
+                        <linearGradient key={analysis} id={`fill${analysis}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop
+                                offset="5%"
+                                stopColor={`var(--color-${analysis})`}
+                                stopOpacity={0.8}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor={`var(--color-${analysis})`}
+                                stopOpacity={0.1}
+                            />
+                        </linearGradient>
+                    ))}
+                </defs>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => {
+                    const date = new Date(value)
+                    return date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    })
+                }}
+                />
+                <ChartTooltip
+                cursor={false}
+                content={
+                    <ChartTooltipContent
+                    labelFormatter={(value) => {
+                        return new Date(value).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         })
                     }}
+                    indicator="dot"
                     />
-                    <ChartTooltip
-                    cursor={false}
-                    content={
-                        <ChartTooltipContent
-                        labelFormatter={(value) => {
-                            return new Date(value).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            })
-                        }}
-                        indicator="dot"
-                        />
-                    }
+                }
+                />
+                {analyses.map((analysis, index) => (
+                    <Area
+                    key={index}
+                    dataKey={analysis}
+                    type="natural"
+                    fill={`url(#fill${analysis})`}
+                    stroke={`var(--color-${analysis})`}
+                    stackId="a"
                     />
-                    {analyses.map((analysis, index) => (
-                        <Area
-                        key={index}
-                        dataKey={analysis}
-                        type="natural"
-                        fill={`url(#fill${analysis})`}
-                        stroke={`var(--color-${analysis})`}
-                        stackId="a"
-                        />
-                    ))}
-                    <ChartLegend content={<ChartLegendContent />} />
-                    </AreaChart>
-                    </ChartContainer>
-                </CardContent>
-            </Card>
-        </div>
+                ))}
+                <ChartLegend content={<ChartLegendContent />} />
+                </AreaChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
     );    
 }

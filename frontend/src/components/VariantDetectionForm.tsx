@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { postData } from "../services/apiService";
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,6 +7,7 @@ import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 
 import {
   Form,
@@ -37,6 +38,8 @@ const formSchema = z.object({
 type ORFVariants = {
     type: string;
     position: number;
+    inserted_base: string;
+    deleted_base: string;
     reference_base: string;
     sample_base: string;
 }
@@ -106,21 +109,27 @@ export default function VarianceDetectionForm() {
             </form>
         </Form>
         {result && (
-        <Card>
+        <Card className='mt-7'>
             <CardHeader>
                 <CardTitle>Result</CardTitle>
             </CardHeader>
             <CardContent>
                 <p>Aligned Reference: {result.aligned_reference}</p>
                 <p>Aligned Sample: {result.aligned_sample}</p>
+                <Separator/>
                 {result.variants.map((variant, index) => {
                     return(
-                        <div key={index}>
-                            <p>Type: {variant.type}</p>
-                            <p>Position: {variant.position}</p>
-                            <p>Reference Base: {variant.reference_base}</p>
-                            <p>Sample Base: {variant.sample_base}</p>
-                        </div>
+                        <React.Fragment key={index}>
+                            <div>
+                                <p>Type: {variant.type}</p>
+                                <p>Position: {variant.position}</p>
+                                {variant.inserted_base && <p>Reference Base: {variant.inserted_base}</p>}
+                                {variant.deleted_base && <p>Reference Base: {variant.deleted_base}</p>}
+                                {variant.reference_base && <p>Reference Base: {variant.reference_base}</p>}
+                                {variant.sample_base && <p>Sample Base: {variant.sample_base}</p>}         
+                            </div>
+                            {result.variants.length-1 != index && <Separator/>}
+                        </React.Fragment>
                     )
                 })}
             </CardContent>
