@@ -85,7 +85,7 @@ export default function ORFDetectionForm() {
             </form>
         </Form>
         {result.length!=0 && (
-        <Card>
+        <Card className='mt-7'>
             <CardHeader>
                 <CardTitle>Result</CardTitle>
             </CardHeader>

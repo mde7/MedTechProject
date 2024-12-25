@@ -93,7 +93,7 @@ export default function SequenceAlignmentForm() {
             </form>
         </Form>
         {result && (
-            <Card>
+            <Card className='mt-7'>
                 <CardHeader>
                     <CardTitle>Result</CardTitle>
                 </CardHeader>
