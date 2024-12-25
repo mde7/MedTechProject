@@ -56,7 +56,7 @@ export default function ORFDetectionForm() {
                 const body = {
                     input_sequence: values.input_sequence,
                 };
-                const endpoint = "http://127.0.0.1:8000/api/orf-detection/";
+                const endpoint = "https://medtech-backend-latest.onrender.com/api/orf-detection/";
     
                 await postData({ url: endpoint, body, setResult });
             } catch (error) {

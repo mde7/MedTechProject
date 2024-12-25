@@ -35,7 +35,7 @@ export default function AreaChartComponent() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/areachart/");
+                const response = await fetch("https://medtech-backend-latest.onrender.com/api/areachart/");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
